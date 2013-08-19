@@ -16,5 +16,12 @@
             "email": "smirik@gmail.com"
         }
     ],
+    "autoload": {
+        "psr-0": { "Smirik\\PropelSerializerBundle": "" }
+    },
+    "target-dir": "Smirik/PropelSerializerBundle",
+    "config": {
+        "bin-dir": "bin"
+    },
     "minimum-stability": "dev"
 }
