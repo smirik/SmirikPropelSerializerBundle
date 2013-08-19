@@ -1,0 +1,25 @@
+parameters:
+    propel.serializer.class: Smirik\PropelSerializerBundle\Serializer\Serializer
+    propel.serializer.model.class: Smirik\PropelSerializerBundle\Serializer\ModelSerializer
+    propel.serializer.form.class: Smirik\PropelSerializerBundle\Serializer\FormSerializer
+    propel.serializer.collection.class: Smirik\PropelSerializerBundle\Serializer\CollectionSerializer
+    propel.serializer.pager.class: Smirik\PropelSerializerBundle\Serializer\PagerSerializer
+    propel.serializer.config.loader.class: Smirik\PropelSerializerBundle\Config\Loader
+    
+services:
+    propel.serializer.model:
+        class: %propel.serializer.model.class%
+    propel.serializer.form:
+        class: %propel.serializer.form.class%
+    propel.serializer.collection:
+        class: %propel.serializer.collection.class%
+        arguments: ['@propel.serializer.model']
+    propel.serializer.pager:
+        class: %propel.serializer.pager.class%
+        arguments: ['@propel.serializer.model']
+    propel.serializer.config.loader:
+        class: %propel.serializer.config.loader.class%
+        arguments: [@service_container]
+    propel.serializer:
+        class: %propel.serializer.class%
+        arguments: ['@propel.serializer.config.loader', '@propel.serializer.model', '@propel.serializer.collection', '@propel.serializer.pager', '@propel.serializer.form']
