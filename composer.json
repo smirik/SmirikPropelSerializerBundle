@@ -1,0 +1,20 @@
+{
+    "name": "smirik/propel-serializer-bundle",
+    "description": "Serializers for Propel ORM",
+    "require": {
+        "[php]": "php",
+        "symfony/symfony": ">=2.3,<2.4-dev",
+        "propel/propel-bundle": "1.*"
+    },
+    "require-dev": {
+        "phpspec/phpspec": "2.0.*@dev"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Evgeny Smirnov",
+            "email": "smirik@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev"
+}
