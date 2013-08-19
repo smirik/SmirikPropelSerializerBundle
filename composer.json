@@ -2,7 +2,7 @@
     "name": "smirik/propel-serializer-bundle",
     "description": "Serializers for Propel ORM",
     "require": {
-        "[php]": "php",
+        "php": ">=5.3.3",
         "symfony/symfony": ">=2.3,<2.4-dev",
         "propel/propel-bundle": "1.*"
     },
@@ -16,5 +16,12 @@
             "email": "smirik@gmail.com"
         }
     ],
+    "autoload": {
+        "psr-0": { "Smirik\\PropelSerializerBundle": "" }
+    },
+    "target-dir": "Smirik/PropelSerializerBundle",
+    "config": {
+        "bin-dir": "bin"
+    },
     "minimum-stability": "dev"
 }
