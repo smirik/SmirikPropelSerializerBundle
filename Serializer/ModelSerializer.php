@@ -14,12 +14,23 @@ class ModelSerializer
     
     public function getValue($model, $config) {
         $res = array();
-        foreach ($config as $key) {
-            $camelize_key = 'get'.\Symfony\Component\DependencyInjection\Container::camelize($key);
-            $res[$key] = $model->{$camelize_key}();
+        foreach ($config as $key => $value) {
+			$this->processProperty($key, $value, $model, &$res);
         }
         return $res;
     }
+	
+	private function processProperty($key, $value, $model, $res)
+	{
+		$invoker = $key;
+		if (isset($value['getter'])) {
+	        $invoker = $value['getter'];
+		}
+		$invoker = 'get'.\Symfony\Component\DependencyInjection\Container::camelize($invoker);
+		
+		$res[$key] = $model->{$invoker}();
+		return;
+	}
 
     public function getConfig($model, $configs, $group)
     {
