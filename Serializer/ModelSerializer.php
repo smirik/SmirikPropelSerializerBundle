@@ -11,27 +11,29 @@ class ModelSerializer
         $value = $this->getValue($model, $config);
         return $value;
     }
-    
-    public function getValue($model, $config) {
-        $res = array();
-        foreach ($config as $key => $value) {
-			$this->processProperty($key, $value, $model, &$res);
-        }
-        return $res;
-    }
 	
-	private function processProperty($key, $value, $model, $res)
-	{
-		$invoker = $key;
-		if (isset($value['getter'])) {
-	        $invoker = $value['getter'];
-		}
-		$invoker = 'get'.\Symfony\Component\DependencyInjection\Container::camelize($invoker);
-		
-		$res[$key] = $model->{$invoker}();
-		return;
+	public function getValue($model, $config) {
+	    $res = array();
+	    foreach ($config as $value) {
+		$this->processConfigValue($value, $model, $res);
+	    }
+	    return $res;
 	}
-
+	
+	private function processConfigValue($value, $model, &$res)
+	{
+		if (is_array($value) && isset(reset($value)['getter'])) {
+	          $invoker = reset($value)['getter'];
+	          $fieldName = key($value);
+		} else {
+	          $invoker = 'get'.$value;
+	          $fieldName = $value;
+	      }
+		$invoker = \Symfony\Component\DependencyInjection\Container::camelize($invoker);
+ 
+		$res[$fieldName] = $model->{$invoker}();
+	}
+    
     public function getConfig($model, $configs, $group)
     {
         $class = str_replace("\\", "\\\\", get_class($model));
