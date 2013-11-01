@@ -4,6 +4,7 @@ namespace Smirik\PropelSerializerBundle\Serializer;
     
 class ModelSerializer
 {
+    protected $serializer;
     
     public function serialize($model, $configs, $group)
     {
@@ -11,16 +12,30 @@ class ModelSerializer
         $value = $this->getValue($model, $config);
         return $value;
     }
-    
-    public function getValue($model, $config) {
-        $res = array();
-        foreach ($config as $key) {
-            $camelize_key = 'get'.\Symfony\Component\DependencyInjection\Container::camelize($key);
-            $res[$key] = $model->{$camelize_key}();
-        }
-        return $res;
-    }
+	
+	public function getValue($model, $config) {
+	    $res = array();
+	    foreach ($config as $value) {
+            $this->processConfigValue($value, $model, $res);
+	    }
+	    return $res;
+	}
+	
+	private function processConfigValue($value, $model, &$res)
+	{
+		if (is_array($value) && isset(reset($value)['getter'])) {
+	          $invoker = reset($value)['getter'];
+	          $fieldName = key($value);
+		} else {
+	          $invoker = 'get'.$value;
+	          $fieldName = $value;
+	      }
+		$invoker = \Symfony\Component\DependencyInjection\Container::camelize($invoker);
 
+        $data = $model->{$invoker}();
+        $res[$fieldName] = $this->serializer->serialize($data);
+	}
+    
     public function getConfig($model, $configs, $group)
     {
         $class = str_replace("\\", "\\\\", get_class($model));
@@ -38,6 +53,11 @@ class ModelSerializer
             throw new RuleNotFoundException("Rule for group '".$group."' is not presented. Default group is not defined.");
         }
         
+    }
+
+    public function setSerializer(Serializer $serializer)
+    {
+        $this->serializer = $serializer;
     }
     
 }
