@@ -21,5 +21,10 @@ class CollectionSerializer
         return $res;
         
     }
+
+    public function setSerializer(Serializer $serializer)
+    {
+        $this->model_serializer->setSerializer($serializer);
+    }
     
 }
