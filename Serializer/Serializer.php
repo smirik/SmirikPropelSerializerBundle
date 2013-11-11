@@ -22,10 +22,14 @@ class Serializer
     
     public function serialize($data, $group = 'default')
     {
+        if (!is_object($data)) {
+            return $data;
+        }
         $class = get_class($data);
         
         switch ($class) {
             case 'PropelObjectCollection':
+                $this->collection_serializer->setSerializer($this);
                 return $this->collection_serializer->serialize($data, $this->config, $group);
                 break;
             
@@ -38,6 +42,7 @@ class Serializer
                 break;
             
             default:
+                $this->model_serializer->setSerializer($this);
                 return $this->model_serializer->serialize($data, $this->config, $group);
                 break;
         }
