@@ -9,19 +9,19 @@ class ModelSerializer
     public function serialize($model, $configs, $group)
     {
         $config = $this->getConfig($model, $configs, $group);
-        $value = $this->getValue($model, $config);
+        $value = $this->getValue($model, $config, $group);
         return $value;
     }
 	
-	public function getValue($model, $config) {
+	public function getValue($model, $config, $group) {
 	    $res = array();
 	    foreach ($config as $value) {
-            $this->processConfigValue($value, $model, $res);
+            $this->processConfigValue($value, $model, $res, $group);
 	    }
 	    return $res;
 	}
 	
-	private function processConfigValue($value, $model, &$res)
+	private function processConfigValue($value, $model, &$res, $group)
 	{
 		if (is_array($value) && isset(reset($value)['getter'])) {
 	          $invoker = reset($value)['getter'];
@@ -33,7 +33,7 @@ class ModelSerializer
 		$invoker = \Symfony\Component\DependencyInjection\Container::camelize($invoker);
 
         $data = $model->{$invoker}();
-        $res[$fieldName] = $this->serializer->serialize($data);
+        $res[$fieldName] = $this->serializer->serialize($data, $group);
 	}
     
     public function getConfig($model, $configs, $group)
