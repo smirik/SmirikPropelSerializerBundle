@@ -7,33 +7,42 @@ class FormSerializer
     
     public function serialize($form)
     {
-        $errors = array();
-        $res = array();
-        foreach ($form->getErrors() as $error) {
-            $res[] = $error->getMessage();
-        }
-        if (count($res) > 0) {
-            $errors['global'] = $res;
-        }
-        foreach ($form->all() as $child) {
-            $res = array();
-            if (!$child->isValid()) {
-                foreach ($child->getErrors() as $error) {
-                    $res[] = $error->getMessage();
-                }
-            }
-            if (count($res) > 0) {
-                $errors[$child->getName()] = $res;
-            }
-        }
-        
+        $errors = $this->getErrors($form, 'global');
+
         $response = array(
             "status"      => "error",
             "status_code" => 400,
             "status_text" => "Form is not valid",
             'message'     => array('fields' => $errors),
         );
+
         return $response;
     }
-    
+
+
+    private function getErrors($element, $name = null)
+    {
+        $errors = array();
+
+        if (!$element->isValid()) {
+
+            foreach ($element->getErrors() as $error) {
+                if (is_null($name)) {
+                    $errors[] = $error->getMessage();
+                } else {
+                    $errors[$name][] = $error->getMessage();
+                }
+            }
+
+            foreach ($element->all() as $child) {
+                $childErrors = $this->getErrors($child);
+                if (!empty($childErrors)) {
+                    $errors[$child->getName()] = $childErrors;
+                }
+            }
+        }
+
+        return $errors;
+    }
+
 }
